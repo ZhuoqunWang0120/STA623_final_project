@@ -28,7 +28,7 @@
 
 ## Poisson log DGLM
 
-1. At any time $t-1$, current information is summarized as $(\theta_{t-1}|D_{t-1},I_{t-1})\sim(m_{t-1},C_{t-1})$
+1. At any time $t-1$, current inforsmation is summarized as $(\theta_{t-1}|D_{t-1},I_{t-1})\sim(m_{t-1},C_{t-1})$
 
 2. Evolutionary equation induces 1-step ahead prior: $(\theta_{t}|D_{t-1},I_{t-1})\sim(a_{t},R_{t}), a_t=G_tm_{t-1},R_t=G_tC_{t-1}G_t^T+W_t$
 
@@ -38,9 +38,11 @@
 
    where $\psi$ and $\psi'$ are digamma and trigamma function
 
-5. 1-step ahead forecast: $(y_t|D_{t-1},I_{t-1})\sim NB(\alpha_t,\frac{1}{1+\beta_t})$. (The notation here is same as Wikipedia for Nb, which is different from appendix of BerryWest2019)
+   (use scipy.special.polygamma(==1==,x) to calculate trigamma in python)
 
-   We can simply use the fact that $(y_t|z_t=1)\sim Poi(\mu_t)+1$, so our 1-step ahead forecast is $E(y_t|z_t=1,D_{t-1},I_{t-1})=E(\mu_t)+1=\alpha_t/\beta_t+1$ by iterated expectation.
+5. 1-step ahead forecast: $(y_t|D_{t-1},I_{t-1})\sim NB(\alpha_t,\frac{1}{1+\beta_t})$. ==(The notation here is same as Wikipedia for Nb, which is different from appendix of BerryWest2019)==
+
+   We can simply use the fact that $(y_t|z_t=1)\sim Poi(\mu_t)+1$, so our 1-step ahead forecast is simply $E(y_t|z_t=1,D_{t-1},I_{t-1})=E(\mu_t)+1=\alpha_t/\beta_t+1$ by iterated expectation.
 
 6. On observing $z_t$, we have the posterior. (no action)
 
@@ -54,7 +56,7 @@
 
 ## Filtering and Forecasting
 
-In DGLM, The positive count model component will be updated ==only when $z_t=1​$.== When $z_t=0​$, the positive count value is treated as missing. I.e., update both Poisson and Bernoulli when $z_t=1​$, and update only Bernoulli when $z_t=0​$.
+In DGLM, The positive count model component will be updated ==only when $z_t=1$.== When $z_t=0$, the positive count value is treated as missing. I.e., update both Poisson and Bernoulli when $z_t=1$, and update only Bernoulli when $z_t=0$.
 
 Forward filtering: Bernoulli and Poisson are updated separately.
 
@@ -72,17 +74,15 @@ where
 
 **Full joint forecast of $y_{t+1:t+k}$: Monte Carlo samples from $p(y_{t+1:t+k}|D_{t},I_t)$ (Appendix 3)**
 
+--------------
 
+==Next: Multivariate case==
 
-
-
-
-
-Try: (Maybe a "future possibilities" part in the presentation on Nov 19)
+Try: (Maybe we could include a "future possibilities" part in the presentation on Nov 19)
 
 1. Normal DLM for simulated continuous data
-2. performance of this model when it is not the true model (via simulation). e.g., when the true data generating process is simply poisson
-3. performance of this model when the counts are not sparse and are large (so maybe it can be treated as continuous): e.g., 中国进出口总额数据, and compare it to normal DGLM or ARMA
+2. performance of this model when it is not the true model (via simulation). e.g., when the true data generating process is just poisson
+3. performance of this model when the counts are not sparse or counts are large, and compare it to normal DGLM or something else (maybe even just a Poisson). As stated in the paper, when counts are large, the series "can often be well-modelled using a normal DLM as an approximation", and, "for a time series with few or no zeros, the binary model will play a relatively limited role".
 4. $W_t$: no need to specify it carefully according to supplementary material. Try different specifications and look at their influence on the outcome (maybe in the univariate case) 
 5. different loss functions 
 
