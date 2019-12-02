@@ -1,0 +1,46 @@
+---
+title: "zape"
+output: html_document
+---
+
+```{r toy example, include=FALSE}
+set.seed(10)
+library(plyr)
+pi0_hat=0.2
+S=rpois(1000,2)+1
+freqtab=count(S)
+freqtab$phat=freqtab$freq/length(S)
+k_hat=1/sum(freqtab$phat/freqtab$x)
+#freqtab$ghat=freqtab$phat/freqtab$x*k_hat
+q_hat=(1-k_hat*pi0_hat)/2
+f_opt=quantile(S,q_hat)
+```  
+
+```{r zape function, include=FALSE}
+library(plyr)
+# same generating process as the toy example
+# sam=rep(0,1000)
+# for (i in 1:1000){
+#   z=rbinom(1,1,0.8)
+#   if (z==0){
+#     sam[i]=z
+#   }
+#   else{
+#     y=rpois(1,2)+1
+#     sam[i]=y
+#   }
+# }
+zape_opt=function(sample_vec){
+  nsam=length(sample_vec)
+  pi0_hat=sum(sample_vec==0)/nsam
+  S=sample_vec[sample_vec!=0]
+  freqtab=count(S)
+  freqtab$phat=freqtab$freq/length(S)
+  k_hat=1/sum(freqtab$phat/freqtab$x)
+  #freqtab$ghat=freqtab$phat/freqtab$x*k_hat
+  q_hat=max((1-k_hat*pi0_hat)/2,0)
+  f_opt=quantile(S,q_hat)
+  return(f_opt)
+}
+```
+
